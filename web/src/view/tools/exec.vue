@@ -39,13 +39,14 @@
 </template>
 
 <script setup>
-import { ref, reactive, onMounted } from 'vue'
+import { ref, reactive, onMounted, onUnmounted } from 'vue'
 import Code from '@/components/tools/code.vue'
 import Host from '@/components/host/host.vue'
 import { ElMessage } from 'element-plus'
 import { isNull } from '@/utils/checkParam'
 import { useRoute, useRouter } from 'vue-router'
 import { getToolContent, getToolTypes, postToolType } from '@/api/tools'
+import {piniaHosts} from '@/pinia/modules/hosts'
 
 const language = ref(null)
 const name = ref(null)
@@ -59,6 +60,8 @@ const allToolTypes = ref([])
 const route = useRoute()
 const router = useRouter()
 const id = route.params.id
+
+const hostStore = piniaHosts()
 
 const hosts = ref("")
 const args = ref("")
@@ -103,8 +106,8 @@ const confirm = () => {
     if (hosts.value.length !== 0) {
         hosts.value = ""
     }
-    if (!isNull(childRef.value.multipleSelection)) {
-        childRef.value.multipleSelection.forEach((value) => {
+    if (!isNull(hostStore.multipleSelection)) {
+        hostStore.multipleSelection.forEach((value) => {
         if (!isNull(value.hostname)){
             if (hosts.value === "") {
                 hosts.value = value.hostname
@@ -119,9 +122,7 @@ const confirm = () => {
 
 const search = () => {
     dialogTableVisible.value = true
-    console.log(childRef.value)
     if (! isNull(childRef.value)){
-        childRef.value.resetPage(1)
         childRef.value.fetchData()
     } 
 }
@@ -133,4 +134,9 @@ const alertMsg = (level, value) => {
         type: level,
     })
 }
+
+onUnmounted(() => {
+    hostStore.resetCurrentPage()
+    hostStore.resetMult()
+})
 </script>

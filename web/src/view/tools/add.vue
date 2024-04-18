@@ -36,7 +36,6 @@ const code = ref(null)
 
 const toolTypeID = ref(null)
 toolTypeID.value = toolStroe.toolTypeID
-console.log(toolStroe.toolTypeID)
 
 const toolTypeValue = ref(null)
 const allToolTypes = ref([])
